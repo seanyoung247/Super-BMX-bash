@@ -8,7 +8,7 @@ import { Point2D, Vector2D, BoundingCircle, BoundingBox } from "./types2d.mjs";
 /**
  * Base class for an object on the map
  */
-class GameObject {
+export class GameObject {
   /**
    * Creates a new game object
    *  @param {Object} game - The gamemanager object
@@ -46,7 +46,7 @@ class GameObject {
 /**
  * Acts as the players avatar in the game
  */
-class Player extends GameObject {
+export class Player extends GameObject {
   /**
    * Creates a new player object
    *  @param {Object} game - The gamemanager object
@@ -244,7 +244,7 @@ class Player extends GameObject {
 /**
  * Defines a track checkpoint
  */
-class CheckPoint extends GameObject {
+export class CheckPoint extends GameObject {
   /**
    * Creates a new CheckPoint
    *  @param {Object} game - The gamemanager object
@@ -281,7 +281,7 @@ class CheckPoint extends GameObject {
 /**
  * Base class for an object that the player can pickup. Obstacle or Power up
  */
-class Pickup extends GameObject {
+export class Pickup extends GameObject {
   constructor(game, sprite, position, template, id) {
     super(game, sprite, position, template);
     this._active = true;
@@ -296,7 +296,7 @@ class Pickup extends GameObject {
 /**
  * Defines a peice of map scenery the player can collide with
  */
-class Scenery extends GameObject {
+export class Scenery extends GameObject {
   constructor(game, sprite, position, template, id) {
     super(game, sprite, position, template);
     this._active = true;
@@ -308,7 +308,7 @@ class Scenery extends GameObject {
  * Custom objects here
  */
 //////////////////////////////////////////////////////////// Bonuses
-class GoFaster extends Pickup {
+export class GoFaster extends Pickup {
   constructor(game, sprite, position, template, id) {
     super(game, sprite, position, template, id);
   }
@@ -321,7 +321,7 @@ class GoFaster extends Pickup {
 }
 
 //////////////////////////////////////////////////////////// Obstacles
-class BananaPeel extends Pickup {
+export class BananaPeel extends Pickup {
   constructor(game, sprite, position, template, id) {
     super(game, sprite, position, template, id);
   }
@@ -334,7 +334,7 @@ class BananaPeel extends Pickup {
   }
 }
 
-class Barrel extends Pickup {
+export class Barrel extends Pickup {
   constructor(game, sprite, position, template, id) {
     super(game, sprite, position, template, id);
   }
@@ -347,7 +347,7 @@ class Barrel extends Pickup {
 }
 
 //////////////////////////////////////////////////////////// Scenery
-class Tree extends Scenery {
+export class Tree extends Scenery {
   constructor(game, sprite, position, template, id) {
     super(game, sprite, position, template, id);
   }
@@ -356,7 +356,7 @@ class Tree extends Scenery {
 /**
  * Creates Game Objects on demand based on templates
  */
-class ObjectFactory {
+export class ObjectFactory {
 
   constructor() {
     this._factories = new Map();
@@ -391,4 +391,4 @@ class ObjectFactory {
 
 }
 
-export { GameObject, Player, CheckPoint, Pickup, Scenery, ObjectFactory };
+//export { GameObject, Player, CheckPoint, Pickup, Scenery, ObjectFactory };

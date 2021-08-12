@@ -3,7 +3,7 @@ import { Game, AssetTypes } from "./gamemanager.mjs";
 import { ColorAsset, ImageAsset } from "./rendermanager.mjs";
 import { CheckPoint, ObjectFactory } from "./gameobjects.mjs";
 
-class Track {
+export class Track {
   constructor(game, image, template) {
     this._game = game;
     this._image = image;
@@ -109,4 +109,4 @@ class Track {
   }
 }
 
-export { Track };
+//export { Track };

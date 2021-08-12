@@ -6,12 +6,12 @@ import { ImageAsset, Renderer, Camera2D } from "./rendermanager.mjs";
 import { Track } from "./track.mjs";
 import { Player, ObjectFactory } from "./gameobjects.mjs";
 
-const AssetTypes = {
+export const AssetTypes = {
   IMAGE: "image",
   SOUND: "sound"
 };
 
-const GameStates = {
+export const GameStates = {
   LOADING: "loading",
   LOADED: "loaded",
   PLAYING: "playing",
@@ -44,7 +44,7 @@ class Clock {
  * Game manager. Creates and manages game objects, runs the main game loop
  * and handles game state and logic.
  */
-class Game {
+export class Game {
   /**
    * Creates a new game
    *  @param {Object} canvas The canvas element to draw the game view to
@@ -447,4 +447,4 @@ class Game {
   }
 }
 
-export { Game, AssetTypes, GameStates };
+//export { Game, AssetTypes, GameStates };

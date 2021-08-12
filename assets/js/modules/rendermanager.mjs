@@ -8,7 +8,7 @@ import { Point2D, Vector2D } from "./types2d.mjs";
  * Allows working with 32bit colors in a transparent manner regardless of the
  * edian-ness of the underlying hardware or the required colour format
  */
-class ColorAsset {
+export class ColorAsset {
   static channels = {
     red: 0, green: 1, blue: 2, alpha: 3
   }
@@ -88,7 +88,7 @@ class ColorAsset {
 /**
  * Encapsulates an image that can be read to and from on a per pixel basis
  */
-class ImageAsset {
+export class ImageAsset {
   /**
    * Creates a new ImageAsset
    *  @param {String} image - The image file path for this texture
@@ -139,7 +139,7 @@ class ImageAsset {
 /**
  * Manages rendering to the screen
  */
-class Renderer {
+export class Renderer {
   /**
    * Creates a new RenderManager
    *  @param {Object} canvas - The HTML canvas object to draw on
@@ -267,8 +267,8 @@ class Renderer {
        const sH = Math.abs( ~~((screenH / tY) * scale) );
        const sW = sH * aR;
        // Camera height offset
-       height = this._camera.verticalOffset - height;
-       const vOffset = (screenH / tY) * height;
+       const sZ = this._camera.verticalOffset - height;
+       const vOffset = (screenH / tY) * sZ;
        // Calculate screen coordinates
        const sX = ~~( (screenW / 2) * (1 + tX / tY) - sW / 2 );
        const sY = ~~( ((screenH) / 2) - sH + vOffset);
@@ -323,7 +323,7 @@ class Renderer {
 /**
  * Defines a 2D camera
  */
-class Camera2D {
+export class Camera2D {
   /**
    * Creates a new camera
    *  @param {Object} position World x,y coordinate of the camera
@@ -365,5 +365,3 @@ class Camera2D {
   }
   //TODO: Vision checks
 }
-
-export { ColorAsset, ImageAsset, Renderer, Camera2D };
