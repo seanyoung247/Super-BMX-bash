@@ -136,7 +136,7 @@ function drawPlayer() {
 }
 
 function drawSprite() {
-  const scale = 15;
+  const scale = minHeight;
   const x = 80;
   const y = 350;
   const z = 0;
@@ -168,6 +168,71 @@ function drawSprite() {
 
     // Draw the sprite to screen
     ctx.drawImage(billboard, sX, sY, size, size);
+  }
+}
+
+function drawClipIndicator() {
+  // Calculate view vector
+  const rX = Math.cos(facing);
+  const rY = Math.sin(facing);
+  //Generate projection plane;
+  const planeX = rY / 2;
+  const planeY = -rX / 2;
+  //Screen position of clips
+}
+
+function drawPoly() {
+  const x1 = 60;
+  const y1 = 350;
+  const z1 = 10;
+  const x2 = 100;
+  const y2 = 350;
+  const z2 = 10;
+
+  // Calculate view vector
+  const rX = Math.cos(facing);
+  const rY = Math.sin(facing);
+  //Generate projection plane;
+  const planeX = rY / 2;
+  const planeY = -rX / 2;
+
+  // Calculate world position relative to canera
+  const wX1 = x1 - mapX;
+  const wY1 = y1 - mapY;
+  const wX2 = x2 - mapX;
+  const wY2 = y2 - mapY;
+
+  // Generate screen/world transform
+  // tX = horizontal scalar tY = depth from screen plane
+  const invDet = 1.0 / (planeX * rY - rX * planeY);
+  const tX1 = invDet * (rY * wX1 - rX * wY1);
+  const tY1 = invDet * (-planeY * wX1 + planeX * wY1);
+  const tX2 = invDet * (rY * wX2 - rX * wY2);
+  const tY2 = invDet * (-planeY * wX2 + planeX * wY2);
+
+  if (tY1 > 15 && tY2 > 15) {
+    const vOffset1 = (canvas.height / tY1) * ((viewHeight) - z1);
+    const vOffset2 = (canvas.height / tY2) * ((viewHeight) - z2);
+    const vOffset3 = (canvas.height / tY1) * ((viewHeight) );
+    const vOffset4 = (canvas.height / tY2) * ((viewHeight) );
+
+    const sX1 = ~~( (canvas.width / 2) * (1 + tX1 / tY1));
+    const sY1 = ~~( ((canvas.height) / 2) + vOffset1);
+    const sX2 = ~~( (canvas.width / 2) * (1 + tX2 / tY2));
+    const sY2 = ~~( ((canvas.height) / 2) + vOffset2);
+    const sY3 = ~~( ((canvas.height) / 2) + vOffset3);
+    const sY4 = ~~( ((canvas.height) / 2) + vOffset4);
+
+    ctx.fillStyle = "red";
+
+    ctx.beginPath();
+    ctx.moveTo(sX1, sY1);
+    ctx.lineTo(sX2, sY2);
+    ctx.lineTo(sX2, sY4);
+    ctx.lineTo(sX1, sY3);
+    ctx.lineTo(sX1, sY1);
+    ctx.fill();
+    ctx.stroke();
   }
 }
 
@@ -223,6 +288,7 @@ function loop(time) {
   projectFloor(viewHeight);
   drawMap();
   drawSprite();
+  drawPoly();
   drawPlayer();
   // Draw overlays
   ctx.fillStyle = "black";

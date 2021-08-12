@@ -23,7 +23,7 @@ const billboard = new Image;
 
 let viewHeight = 1;
 let minHeight = 1;
-let maxHeight = 100;
+let maxHeight = 250;
 
 let mapX = 950;
 let mapY = 500;
@@ -32,7 +32,7 @@ let facing = 1.57079632679;
 let rotate = 0;
 let move = 0;
 
-testImg.src = "assets/img/island.jpg";
+testImg.src = "assets/img/sand.jpg";
 sprite.src = "assets/img/plane.png";
 billboard.src = "assets/img/billboard.png";
 
@@ -75,7 +75,7 @@ function drawBackground() {
   // Clear the canvas and draw sky and background
   ctx.fillStyle = "cyan";
   ctx.fillRect(0,0,canvas.width,canvas.height/2);
-  ctx.fillStyle = "green";
+  ctx.fillStyle = "#2244ff";
   ctx.fillRect(0,canvas.height/2,canvas.width,canvas.height);
 }
 
@@ -112,14 +112,17 @@ function projectFloor(height) {
       sx = ~~(sx * height + mapX);
       sy = ~~(sy * height + mapY);
 
-      if (sx > 0 && sx < imgData.width && sy > 0 && sy < imgData.height){
+      //if (sx > 0 && sx < imgData.width && sy > 0 && sy < imgData.height){
+
+        sx = Math.abs(sx) % imgData.width; sy = Math.abs(sy) % imgData.height;
+
         // Generate image and screen buffer offsets
         let soff = sy * imgData.width + sx;
         let doff = y * screenData.width + x;
 
         // Copy pixel data
         sD[doff] = iD[soff];
-      }
+      //}
     }
   }
   // Copy the buffer data back to the screen
@@ -142,15 +145,15 @@ function drawSprite() {
   // Is the sprite in front of the view?
   if (rX*x+rY*y > 0) {
     // Generate projection plane
-    let planeX = rY / 2;
-    let planeY = -rX / 2;
+    let planeX = rY / 2.0;
+    let planeY = -rX / 2.0;
     // Generate transform coordinates
     let invDet = 1.0 / (planeX * rX - rY * planeY);
     let tX = invDet * (rY * x - rX * y);
     let tY = invDet * (-planeY * x + planeX * y);
 
     let distance = Math.sqrt(x*x+y*y+viewHeight*viewHeight);
-    let size = (((canvas.height)/distance))*15;
+    let size = (((canvas.height)/distance)*15);
 
     let sX = Math.floor( (canvas.width / 2) * (1 + tX / tY) - (size / 2) );
     let sY = Math.floor( ((canvas.height - size) / 2) + (size / 2) * viewHeight);
@@ -159,12 +162,11 @@ function drawSprite() {
   }
 }
 
-
 function moveView(dir) {
   let vX = Math.cos(facing);
   let vY = Math.sin(facing);
-  mapX += (vX * 2);// * dir;
-  mapY += (vY * 2);// * dir;
+  mapX += (vX * 2) * dir;
+  mapY += (vY * 2) * dir;
 }
 
 function changeHeight(dir) {
@@ -198,7 +200,7 @@ let lastTime = performance.now();
 function loop(time) {
   // Update state
   rotateView(rotate);
-//  moveView(move);
+  //moveView(move);
   changeHeight(move);
   // Draw Frame
   drawBackground();
