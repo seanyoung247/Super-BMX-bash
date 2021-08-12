@@ -222,9 +222,12 @@ export class BoundingCircle extends Point2D {
   /**
    * Detects if collision has occured between two bounding circles
    */
-  intersection(circle) {
+  collides(circle) {
     return (this.distanceTo(circle) < (this._radius + circle._radius));
   }
+
+  /** NOT YET IMPLEMENTED */
+  intersects(circle) {return null;}
 }
 
 /**
@@ -375,3 +378,5 @@ export class BoundingBox extends Point2D {
     return false;
   }
 }
+
+//export { Point2D, Vector2D, BoundingCircle, BoundingBox };
