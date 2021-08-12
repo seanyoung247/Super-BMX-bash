@@ -36,7 +36,7 @@ export class GameObject {
   }
 
   collision(object) {
-    if (this._active && object._active) return this._bounds.collides(object._bounds);
+    if (this._active && object._active) return this._bounds.intersection(object._bounds);
     else return false;
   }
 
