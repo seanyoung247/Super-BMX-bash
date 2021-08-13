@@ -4,7 +4,9 @@
  *  Defines types for working in 2D space
  *
  */
-
+Math.clamp = function(val, min, max) {
+  return Math.max(min, Math.min(val, max));
+}
 
 /**
  * Models a point in 2D space
@@ -20,6 +22,12 @@ export class Point2D {
     this._y = y;
   }
   /**
+   * Creates a copy of this point
+   */
+  clone() {
+    return new Point2D(this._x, this._y);
+  }
+  /**
    * Copies the values of another point to this one
    *  @param {Object} point - The point to copy to this one
    */
@@ -31,30 +39,22 @@ export class Point2D {
    * Gets the x coordinate of this point
    *  @return {number} The x axis coordinate
    */
-  get x() {
-    return this._x;
-  }
+  get x() { return this._x; }
   /**
    * Sets the x coordinate of this point
    *  @param {number} val - The new value for the x axis coordinate
    */
-  set x(val) {
-    this._x = val;
-  }
+  set x(val) { this._x = val; }
   /**
    * Gets the x coordinate of this point
    *  @return {number} The y axis coordinate
    */
-  get y() {
-    return this._y;
-  }
+  get y() { return this._y; }
   /**
    * Sets the y coordinate of this point
    *  @param {number} val - The new value for the y axis coordinate
    */
-  set y(val) {
-    this._y = val;
-  }
+  set y(val) { this._y = val; }
   /**
    * Calculates the distance between two points
    *  @param {Object} point - The point to measure distance to
@@ -89,6 +89,9 @@ export class Vector2D extends Point2D {
    */
   constructor(x, y) {
     super(x, y);
+  }
+  clone() {
+    return new Vector2D(this._x, this._y);
   }
   /**
    * Normaizes this vector. A normalized vector is one with a magnitude of 1.
@@ -208,16 +211,12 @@ export class BoundingCircle extends Point2D {
    * Get the radius value
    *  @return {number} The radius value
    */
-  get radius() {
-    return this._radius;
-  }
+  get radius() { return this._radius; }
   /**
    * Set the radius of the box
    *  @param {number} val - the new circle radius
    */
-  set radius(val) {
-    this._radius = val;
-  }
+  set radius(val) { this._radius = val; }
 
   /**
    * Detects if collision has occured between two bounding circles
@@ -235,15 +234,15 @@ export class BoundingCircle extends Point2D {
 export class BoundingBox extends Point2D {
   /**
    * Creates a new bounding box
-   *  @param {number} x - The x position of the top left corner
-   *  @param {number} y - The y position of the top left corner
-   *  @param {number} width - The width of the box
-   *  @param {number} height - The height of the box
+   *  @param {number} x - The x position of the center of the box
+   *  @param {number} y - The y position of the center of the box
+   *  @param {number} rX - Distance from center to x sides
+   *  @param {number} rY - Distance from center to y sides
    */
-  constructor(x, y, width, height) {
+  constructor(x, y, rX, rY) {
     super(x, y);
-    this._w = width;
-    this._h = height;
+    this._rX = rX;
+    this._rY = rY;
   }
   /**
    * Copies the values of another BoundingBox to this one
@@ -252,126 +251,154 @@ export class BoundingBox extends Point2D {
   copy(box) {
     this._x = box._x;
     this._y = box._y;
-    this._w = box._w;
-    this._h = box._h;
+    this._rX = box._rX;
+    this._rY = box._rY;
   }
-  /**
-   * Get the width value
-   *  @return {number} The width value
-   */
-  get width() {
-    return this._w;
-  }
-  /**
-   * Set the width of the box
-   *  @param {number} val - the new box width
-   */
-  set width(val) {
-    this._w = val;
-  }
-  /**
-   * Get the height value
-   *  @return {number} The height value
-   */
-  get height() {
-    return this._h;
-  }
-  set height(val) {
-    this._h = val;
-  }
+
+  get radiusX() { return this._rX; }
+  set radiusX(val) { this._rX = val; }
+  get radiusY() { return this._rY; }
+  set radiusY(val) { this._rY = val; }
+
   /**
    * Checks whether the point is within the box boundary
    *  @param {Object} point - The Point2D cordinates to check
-   *  @return {boolean} true if the point is inside this box, otherwise false
+   *  @return {object} An object describing any collision or null if no collision
    */
-  pointInBounds(point) {
-    return this.inBounds(point._x, point._y);
-  }
-  /**
-   * Checks whether the x,y coordinate passed is within the box boundary
-   *  @param {number} x - The x coordinate
-   *  @param {number} y - The y coordinate
-   *  @return {boolean} true if the point is inside this box, otherwise false
-   */
-  inBounds(x, y) {
-    if (x >= this._x && y >= this._y &&
-        x <= (this._x + this._w) &&
-        y <= (this._y + this._h)) {
-      return true;
+  pointIntersection(point) {
+    const dX = point.x - this._x;
+    const pX = this._rX - Math.abs(dX);
+    if (pX <= 0) {
+      return null;
     }
-    return false;
+
+    const dY = point.y - this._y;
+    const pY = this._rY - Math.abs(dY);
+    if (pY <= 0) {
+      return null;
+    }
+
+    if (pX < pY) {
+      const sX = Math.sign(dX);
+      return {
+        delta: { x: pX * sX , y: 0 },
+        normal: sX,
+        pos: { x: this._x + (this._rX * sX) , y: point.y }
+      }
+    } else {
+      const sY = Math.sign(dY);
+      return {
+        delta: { x: 0, y: pY * sY },
+        normal: sY,
+        pos: { x: point.x , y: this._y + (this._rX * sX) }
+      }
+    }
   }
+
   /**
-   * Performs a simple collision check on another boundingBox.
+   * Checks if a vector intersects this bounding box anywhere along it's length
+   *  @param {Object} origin Point2D describing the origin of the vector
+   *  @param {Object} vector Vector2D describing the vector
+   *  @param {number} pX X axis padding to add to bounding box dimensions
+   *  @param {number} pY Y axis padding to add to bounding box dimensions
+   */
+  vectorIntersection(origin, vector, pX=0, pY=0) {
+    const scaleX = 1.0 / vector.x;
+    const scaleY = 1.0 / vector.y;
+    const signX = Math.sign(scaleX);
+    const signY = Math.sign(scaleY);
+    const nearTimeX = (this._x - signX * (this._rX + pX) - origin.x) * scaleX;
+    const nearTimeY = (this._y - signY * (this._rY + pY) - origin.y) * scaleY;
+    const farTimeX = (this._x + signX * (this._rX + pX) - origin.x) * scaleX;
+    const farTimeY = (this._y + signY * (this._rY + pY) - origin.y) * scaleY;
+
+    if (nearTimeX > farTimeY || nearTimeY > farTimeX) {
+      return null;
+    }
+
+    const nearTime = nearTimeX > nearTimeY ? nearTimeX : nearTimeY;
+    const farTime = farTimeX > farTimeY ? farTimeX : farTimeY;
+
+    if (nearTime >= 1 || farTime <= 0) {
+      return null;
+    }
+
+    let hit = {time: Math.clamp(nearTime, 0, 1)};
+    if (nearTimeX > nearTimeY) {
+      hit.normal ={
+        x: -signX,
+        y: 0
+      };
+    } else {
+      hit.normal = {
+        x: 0,
+        y: -signY
+      };
+    }
+    hit.delta = {
+      x: (1.0 - hit.time) * -vector.x,
+      y: (1.0 - hit.time) * -vector.y
+    };
+    hit.pos = {
+      x: origin.x + vector.x * hit.time,
+      y: origin.y + vector.y * hit.time
+    };
+
+    return hit;
+  }
+
+  /**
+   * Performs a collision test that checks where the two boxes are overlapping
+   * and indicates the closest point to move them out of collision.
    *  @param {Object} box - The BoundingBox to check for intersection
-   *  @return {boolean} true if colliding
+   *  @return {Object} An object describing any collision or null if no collision
    */
-  collides(box) {
-    if (this._x < box._x + box._w &&
-        this._x + this._w > box._x &&
-        this._y < box._y + box._h &&
-        this._y + this._h > box._y) {
-      return true;
+  intersection(box) {
+    const dX = box._x - this._x;
+    const pX = (box._rX + this._rX) - Math.abs(dX);
+    if (pX <= 0) {
+      return null;
     }
-    return false;
-  }
-  /**
-   * Performs a comprehensive collision test that checks where the two boxes are
-   * overlapping and indicates the closest point to move them out of collision.
-   *  @param {Object} box - The BoundingBox to check for intersection
-   *  @return {Object} a dictionary with side: axis of intersection and
-   *                     pos: closest point of non-intersection
-   */
-  intersects(box) {
-    // Find the amount of intersection for the left and right sides
-    const x1 = (box._x + box._w) - this._x;
-    const x2 = (this._x + this._w) - box._x;
-    let x = 0, xPos = 0;
-    // Find the closest side
-    if (x1 < x2) {
-      x = x1;
-      xPos = this._x - (box._w + 1);
-    } else {
-      x = x2;
-      xPos = this._x + this._w + 1;
-    }
-    // If x is negative there's no collision in x which means
-    // the boxes aren't intersecting
-    if (x < 0) return null;
 
-    // Find the amount of intersection for the top and bottom sides
-    const y1 = (box._y + box._h) - this._y;
-    const y2 = (this._y + this._h) - box._y;
-    let y = 0, yPos = 0;
-    if (y1 < y2) {
-      y = y1;
-      yPos = this._y - (box._h + 1);
-    } else {
-      y = y2;
-      yPos = this._y + this._h + 1;
+    const dY = box._y - this._y;
+    const pY = (box._rY + this._rY) - Math.abs(dY);
+    if (pY <= 0) {
+      return null;
     }
-    if (y < 0) return null;
 
-    // Find the closest axis
-    if (x < y) {
-      // x collision
-      return {side: 'x', pos: xPos};
+    if (pX < pY) {
+      const sX = Math.sign(dX);
+      return {
+        delta: { x: pX * sX , y: 0 },
+        normal: sX,
+        pos: { x: this._x + (this._rX * sX) , y: box._y }
+      }
     } else {
-      return {side: 'y', pos: yPos};
+      const sY = Math.sign(dY);
+      return {
+        delta: { x: 0, y: pY * sY },
+        normal: sY,
+        pos: { x: box._x , y: this._y + (this._rY * sY) }
+      }
     }
   }
 
   /**
-   * Checks the entire boundingBox passed is inside this one.
-   *  @param {Object} box - The box to check
-   *  @return {boolean} True/False whether the box passed is contained within this one
+   * Performs a collision test for a bounding box moving along a vector
+   *  @param {object} box
    */
-  contains(box) {
-    if (this._x < box._x && this._y < box._y &&
-        this._x + this._w > box._x + box._w &&
-        this._y + this._h > box._y + box._h) {
-      return true;
+  sweptIntersection(box, vector) {
+    // If box isn't moving we can just do a static intersection
+    if (vector.x === 0 && vector.y === 0) {
+      return this.intersection(box);
     }
-    return false;
+    // Sweeping a box is the same as sweeping a vector with the target dimensions
+    // increased by the box's radius
+    const hit = this.vectorIntersection(box, vector, box._rX, box._rY);
+    if (hit) {
+      hit.delta.x += vector.x;
+      hit.delta.y += vector.y;
+    }
+    return hit;
   }
 }
