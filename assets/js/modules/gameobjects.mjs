@@ -37,10 +37,10 @@ export class GameObject {
 
   collision(object) {
     if (this._active && object._active) return this._bounds.intersection(object._bounds);
-    else return false;
+    else return null;
   }
 
-  playerCollision(player) {}
+  playerCollision(player) {/*Just a placeholder, implemented in derived classes*/}
 }
 
 /**
@@ -175,7 +175,6 @@ export class Player extends GameObject {
       }
       if (this._speed < 0) this._speed = 0;
 
-
       // Update rotation
       const rotation = ((this._rotation) * ((this._speed / this._maxSpeed)/2));
       if(this._speed > 0) this._direction.rotateByRadians(rotation * timeDelta);
@@ -220,6 +219,7 @@ export class Player extends GameObject {
     this._vAcceleration -= this._game.gravity * timeDelta;
     this._checkCollisions();
 
+    // If the player is off the map, reset to last checkpoint
     if (!this._game.track.inBounds(this._bounds.x, this._bounds.y))
       this._game.respawnAtLastCheckpoint();
   }
