@@ -4,7 +4,7 @@
 
 import { Game } from "./gamemanager.mjs";
 import { Point2D, Vector2D } from "./types2d.mjs";
-import { BoundingCircle, BoundingBox } from "./colliders.mjs";
+import { BoundingCircle, BoundingBox } from "./colliders2d.mjs";
 
 /**
  * Base class for an object on the map
