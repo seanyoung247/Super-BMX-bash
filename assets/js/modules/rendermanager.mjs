@@ -152,7 +152,7 @@ export class Renderer {
     this._camera = new Camera2D(
       {x:0,y:0},
       {x:0,y:0},
-      5,15,1000,10
+      10,15,1000,10
     );
     this._thisFrameTime = 0;
     this._lastFrameTime = 0;
@@ -336,7 +336,7 @@ export class Camera2D {
   constructor(position, direction, scale, nearClip=5, farClip=1000, height=5) {
     this._position = new Point2D(position.x, position.y);
     this._direction = new Vector2D(direction.x, direction.x);
-    this._scale = 10;//scale;
+    this._scale = scale;
     this._nearClip = nearClip;
     this._farClip = farClip
     this._height = height;
