@@ -191,48 +191,46 @@ export class Renderer {
        much as possible offers an order of magnitude speed increase here.
        20ms > 2ms */
     // Screen data
-    const width = this._canvas.width;
-    const height = this._canvas.height;
-    const halfWidth = width >> 1;
-    const halfHeight = height >> 1;
+    const screen = {w: this._canvas.width, h:this._canvas.height};
+    const halfScreen = {w: screen.w >> 1, h: screen.h >> 1};
     // Screen buffer
-    const screenData = new ImageData(this._canvas.width, halfHeight);
+    const screenData = new ImageData(screen.w, halfScreen.h);
     const screenPixels = new Uint32Array(screenData.data.buffer);
     // Source image data
     const imagePixels = image.pixels;
-    const imageW = image.width;
-    const imageH = image.height;
+    const img = {w: image.width, h: image.height}
     // Camera properties
     const cVOff = this._camera.verticalOffset;
-    const cX = this._camera.position.x;
-    const cY = this._camera.position.y;
+    const c = {x: this._camera.position.x, y: this._camera.position.y};
     // Create projection plane from camera view
-    const rX = this._camera.direction.y;
-    const rY = -this._camera.direction.x;
+    const p = {x: this._camera.direction.y, y: -this._camera.direction.x};
+
+    const fX = {x: 0, y: 0};
+    const sX = {x: 0, y: 0};
     let pixel = color;
 
     // Loop through the floor area of the screen in scanlines
-    for (let y = 0; y < halfHeight; y++) {
-      for (let x = 0; x < width; x++) {
-        // Project screen coordinates to floor coordinates
-        const wX = (x - halfWidth) / y;
-        const wY = height / y;
+    for (let y = 0; y < halfScreen.h; y++) {
+      for (let x = 0; x < screen.w; x++) {
+        // Project screen coordinates to untransformed floor coordinates
+        const wX = (x - halfScreen.w) / y;
+        const wY = screen.h / y;
         // Add camera rotation (basic vector rotation)
-        let sX = wX * rX - wY * rY;
-        let sY = wX * rY + wY * rX;
+        let sX = wX * p.x - wY * p.y;
+        let sY = wX * p.y + wY * p.x;
         // Offset for camera height and move to camera x/y position
-        sX = ~~(sX * cVOff + cX);
-        sY = ~~(sY * cVOff + cY);
+        sX = ~~(sX * cVOff + c.x);
+        sY = ~~(sY * cVOff + c.y);
         pixel = color;
         // Is the pixel in the buffer?
-        if (sX > 0 && sX < imageW && sY > 0 && sY < imageH-1) {
-          pixel = imagePixels[sY * imageW + sX];
+        if (sX > 0 && sX < img.w && sY > 0 && sY < img.h-1) {
+          pixel = imagePixels[sY * img.w + sX];
         }
-        screenPixels[y * width + x] = pixel;
+        screenPixels[y * screen.w + x] = pixel;
       }
     }
     // Copy the buffer data to the screen
-    this._ctx.putImageData(screenData, 0, halfHeight + 1);
+    this._ctx.putImageData(screenData, 0, halfScreen.h + 1);
   }
 
   /**
