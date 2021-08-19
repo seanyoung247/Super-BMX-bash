@@ -19,6 +19,8 @@ export const GameStates = {
   FINISHED: "finished"
 }
 
+var avgTime = 0;
+
 /**
  * Basic clock class. Encapsulates basic time functions.
  */
@@ -394,7 +396,10 @@ export class Game {
     // Draw backdrop
     this._renderer.drawSky(this._track.skyColor.hexStr);
     // Draw gound plain
+//    const t1 = performance.now();
     if (this._track.image.loaded) this._renderer.projectFloor(this._track.image, this._track.groundColor.color);
+    // avgTime += (performance.now() - t1);
+    // console.log(avgTime / this._frameCounter);
     // Draw objects
     for (let i = 0; i < this._objects.length; i++) {
       this._objects[i].draw(this._renderer);
@@ -446,5 +451,3 @@ export class Game {
     }
   }
 }
-
-//export { Game, AssetTypes, GameStates };
