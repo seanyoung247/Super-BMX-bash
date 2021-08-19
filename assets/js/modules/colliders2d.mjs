@@ -61,9 +61,9 @@ export class CircleCollider extends Point2D {
  * Implements an Axis Aligned Bounding Box (AABB)
  *  @extends Point2D
  */
-export class BoundingBox extends Point2D {
+export class AABBCollider extends Point2D {
   /**
-   * Creates a new bounding box
+   * Creates a new AABBCollider
    *  @param {number} x - The x position of the center of the box
    *  @param {number} y - The y position of the center of the box
    *  @param {number} rX - Distance from center to x sides
@@ -75,8 +75,8 @@ export class BoundingBox extends Point2D {
     this._rY = rY;
   }
   /**
-   * Copies the values of another BoundingBox to this one
-   *  @param {Object} box - the BoundingBox to copy
+   * Copies the values of another AABBCollider to this one
+   *  @param {Object} box - the AABBCollider to copy
    */
   copy(box) {
     this._x = box._x;
@@ -89,6 +89,13 @@ export class BoundingBox extends Point2D {
   set radiusX(val) { this._rX = val; }
   get radiusY() { return this._rY; }
   set radiusY(val) { this._rY = val; }
+
+  /**
+   * Performs a simple collision check on another AABBCollider.
+   *  @param {Object} box - The AABBCollider to check for intersection
+   *  @return {boolean} true if colliding
+   */
+  collision(box) {}
 
   /**
    * Checks if an object is colliding with this one
@@ -212,27 +219,7 @@ export class BoundingBox extends Point2D {
   }
 
   /**
-   * Performs a collision test that checks where the two boxes are overlapping
-   * and indicates the closest point to move them out of collision.
-   *  @param {Object} box The BoundingBox to check for intersection
-   *  @return {Object} An object describing any collision or null if no collision
-   */
-  boxIntersection(box) {
-    return this.intersection(box._x, box._y, box._rX, box._rY);
-  }
-
-  /**
-   * Performs an intersection test between this bounding box and a circular
-   * collider.
-   *  @param {Object} circle The circle that is colliding with this one
-   *  @return {Object} An object describing any collision or null if no collision
-   */
-  circleIntersection(circle) {
-    return this.intersection(circle.x, circle.y, circle.radius, circle.radius);
-  }
-
-  /**
-   * Performs a collision test for a bounding box moving along a vector to detect
+   * Performs a collision test for a AABBCollider moving along a vector to detect
    * if the box will intersect at any point while moving along it's vector.
    * Returns a hit object describing the last good position before collision for
    * the object or null if no collision.
@@ -240,7 +227,7 @@ export class BoundingBox extends Point2D {
    *  @param {Object} vector The Vector2D the box is moving along
    *  @return {Object} hit object describing the collision and last good position
    */
-  sweptIntersection(box, vector) {
+  sweptBoxIntersection(box, vector) {
     // If box isn't moving we can just do a static intersection
     if (vector.x === 0 && vector.y === 0) {
       return this.intersection(box);
