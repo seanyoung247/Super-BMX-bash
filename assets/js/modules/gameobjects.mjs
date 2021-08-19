@@ -4,7 +4,7 @@
 
 import { Game } from "./gamemanager.mjs";
 import { Point2D, Vector2D } from "./types2d.mjs";
-import { BoundingCircle, BoundingBox } from "./colliders2d.mjs";
+import { CircleCollider, AABBCollider } from "./colliders2d.mjs";
 
 /**
  * Base class for an object on the map
@@ -20,7 +20,7 @@ export class GameObject {
   constructor(game, sprite, position, template) {
     this._game = game;
     this._sprite = sprite;
-    this._bounds = new BoundingCircle(position.x, position.y, template.radius);
+    this._bounds = new CircleCollider(position.x, position.y, template.radius);
     this._scale = template.scale;
     this._height = template.height;
     this._active = false;
@@ -37,7 +37,7 @@ export class GameObject {
   }
 
   collision(object) {
-    if (this._active && object._active) return this._bounds.intersection(object._bounds);
+    if (this._active && object._active) return this._bounds.collision(object._bounds);
     else return null;
   }
 
