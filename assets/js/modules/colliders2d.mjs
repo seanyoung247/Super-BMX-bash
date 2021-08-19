@@ -50,8 +50,40 @@ export class CircleCollider extends Point2D {
       ((this._radius + circle._radius) * (this._radius + circle._radius)));
   }
 
-  intersection(x, y, rX, rY) {
+  /**
+   * Checks if an object is colliding with this one
+   *  @param {number} x The x coordinate of the center of the object
+   *  @param {number} y The y coordinate of the center of the object
+   *  @param {number} radius The offset between the object's center and sides
+   *  @return {Object} A hit object describing the collision or null if no collision
+   */
+  intersection(x, y, radius) {
+    // The vector between object centres
+    const d = {x: this._x - x, y: this._y - y};
+    const dist2 = (d.x * d.x) + (d.y * d.y); // Square of distance
+    const cR = this._radius + radius;        // Combined radius
+    const r2 = cR * cR;                      // Square of combined radius
+    // If the square of distance is smaller than the square of radius, collision has occured.
+    if (dist2 < r2) {
+      /* d describes a vector between centre points. We can use that vector
+         to place the point outside the circle by scaling it to be the same
+         length as the combined circle radii */
+      const dist = Math.sqrt(dist2);
+      const offset = cR - dist;   // Offset distance from point to boundary
+      // Normalised vector of collision direction
+      const n = {x: d.x / dist, y: d.y / dist};
+      // Displacement vector (vector between collision point and current position)
+      const v = {x: n.x * offset, y: n.y * offset};
+      // First boundary intersection point
+      const p = {x: this._x - (n.x * this._radius), y: this._y - (n.y * this._radius)};
 
+      return {
+        delta: {x: -v.x, y: -v.y},  // Vector that will move object out of collision
+        normal: {x: -n.x, y: -n.y}, // A vector pointing directly away from the collision
+        pos: {x: p.x, y: p.y}       // The collision point
+      };
+    }
+    return null;
   }
 
   circleIntersection(circle) {}
