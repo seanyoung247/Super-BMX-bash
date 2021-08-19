@@ -165,14 +165,23 @@ export class AABBCollider extends Point2D {
         pos: { x: point.x , y: this._y + (this._rX * sX) }
       }
     }
+  /**
+   * Performs an intersection test between this AABBCollider and a circular
+   * collider.
+   *  @param {Object} circle The circle that is colliding with this one
+   *  @return {Object} An object describing any collision or null if no collision
+   */
+  circleIntersection(circle) {
+    // Treats the circle as a square. Ok for now but needs to be fixed
+    return this.intersection(circle.x, circle.y, circle.radius, circle.radius);
   }
 
   /**
    * Checks if a vector intersects this bounding box anywhere along it's length
    *  @param {Object} origin Point2D describing the origin of the vector
    *  @param {Object} vector Vector2D describing the vector
-   *  @param {number} pX X axis padding to add to bounding box dimensions
-   *  @param {number} pY Y axis padding to add to bounding box dimensions
+   *  @param {number} pX X axis padding to add to AABBCollider dimensions
+   *  @param {number} pY Y axis padding to add to AABBCollider dimensions
    */
   vectorIntersection(origin, vector, pX=0, pY=0) {
     const scaleX = 1.0 / vector.x;
@@ -238,6 +247,7 @@ export class AABBCollider extends Point2D {
     if (hit) {
       hit.delta.x += vector.x;
       hit.delta.y += vector.y;
+      // If delta x and y are 0 box is already in intersection before moving
     }
     return hit;
   }
@@ -250,6 +260,7 @@ export class AABBCollider extends Point2D {
    *  @return {Object} hit object describing the collision and last good position
    */
   sweptCircleIntersection(circle, vector) {
+    // Treats the circle as a square. Needs improvement.
     if (vector.x === 0 && vector.y === 0) {
       return this.circleIntersection(circle);
     }
