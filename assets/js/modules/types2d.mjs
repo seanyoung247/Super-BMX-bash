@@ -182,4 +182,27 @@ export class Vector2D extends Point2D {
   }
 
   ///////////////////////////////////////////////////////////////// Mathematical
+  /**
+   * Adds a Vector2D to this one.
+   *  @param {Object} vector - The vector to add to this one
+   */
+  add(vector) {
+    this._x += vector._x;
+    this._y += vector._y;
+  }
+  /**
+   * Subtracts a Vector2D from this one
+   *  @param {Object} vector - The vector to subtract from this one
+   */
+  sub(vector) {
+    this._x -= vector._x;
+    this._y -= vector._y;
+  }
+  /**
+   * Calculates the dot product of two vectors
+   *  @param {Object} vector
+   */
+  dot(vector) {
+    return (this._x * vector._x) + (this._y * vector._y);
+  }
 }
