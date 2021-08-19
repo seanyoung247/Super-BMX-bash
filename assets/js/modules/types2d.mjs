@@ -146,7 +146,8 @@ export class Vector2D extends Point2D {
     this._x = tX;
     this._y = tY;
   }
-  // Addative rotation
+
+  //////////////////////////////////////////////////////////// additive rotation
   /**
    * Rotates this vector clockwise by an angle in radians
    *  @param {number} radians - The angle to rotate by in radians
@@ -164,7 +165,8 @@ export class Vector2D extends Point2D {
   rotateByVector(vector) {
     this.rotate(vector._x, vector._y, 1);
   }
-  // Subtractive Rotation
+
+  ///////////////////////////////////////////////////////// Subtractive Rotation
   /**
    * Rotates this vector anti-clockwise by an angle in radians
    *  @param {number} radians - The angle to rotate by in radians
@@ -182,4 +184,6 @@ export class Vector2D extends Point2D {
   unrotateByVector(vector) {
     this.rotate(vector._x, vector._y, -1);
   }
+
+  ///////////////////////////////////////////////////////////////// Mathematical
 }
