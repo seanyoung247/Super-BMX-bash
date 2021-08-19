@@ -114,20 +114,20 @@ export class AABBCollider extends Point2D {
     const pY = (rY + this._rY) - Math.abs(dY);
     if (pY <= 0) return null;
 
-    if (pX < pY) {
+    if (pX <= pY) {
       // Closest to x axis - so x was the collision point
       const sX = Math.sign(dX);
       return {
         delta: {x: pX * sX, y: 0},
-        normal: sX,
+        normal: {x: sX, y: 0},
         pos: {x: this._x + (this._rX * sX), y: y}
       };
     } else {
       const sY = Math.sign(dY);
       return {
         delta: {x: 0, y: pY * sY},
-        normal: sY,
-        pos: {x: x, y: this._y + (this.rY * sY)}
+        normal: {x: 0, y: sY},
+        pos: {x: x, y: this._y + (this._rY * sY)}
       };
     }
   }
@@ -196,16 +196,15 @@ export class AABBCollider extends Point2D {
     if (nearTimeX > farTimeY || nearTimeY > farTimeX) {
       return null;
     }
-
     const nearTime = nearTimeX > nearTimeY ? nearTimeX : nearTimeY;
-    const farTime = farTimeX > farTimeY ? farTimeX : farTimeY;
+    const farTime = farTimeX < farTimeY ? farTimeX : farTimeY;
     if (nearTime >= 1 || farTime <= 0) {
       return null;
     }
 
     let hit = {time: Math.clamp(nearTime, 0, 1)};
     if (nearTimeX > nearTimeY) {
-      hit.normal ={
+      hit.normal = {
         x: -signX,
         y: 0
       };
