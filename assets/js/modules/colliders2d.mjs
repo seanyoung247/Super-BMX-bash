@@ -86,8 +86,22 @@ export class CircleCollider extends Point2D {
     return null;
   }
 
-  circleIntersection(circle) {}
-  boxIntersection(box) {}
+  /**
+   * Checks whether the point is within the circle
+   *  @param {Object} point - The Point2D cordinates to check
+   *  @return {object} An object describing any collision or null if no collision
+   */
+  pointIntersection(point) {
+    return this.intersection(point.x, point.y, 0);
+  }
+  /**
+   * Performs an intersection test between this CircleCollider and another
+   *  @param {Object} circle - The other CircleCollider to test against
+   *  @return {Object} A hit object describing the collision or null if no collision
+   */
+  circleIntersection(circle) {
+    return this.intersection(circle._x, circle._y, circle._radius);
+  }
 }
 
 /**
