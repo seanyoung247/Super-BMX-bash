@@ -8,7 +8,7 @@ Math.clamp = function(val, min, max) {
 /**
  * Defines a circular point in 2D space that can collide and detect collision
  */
-export class BoundingCircle extends Point2D {
+export class CircleCollider extends Point2D {
   /**
    * Creates a new bounding circle
    *  @param {number} x - The x position of the centre of the circle
@@ -20,8 +20,8 @@ export class BoundingCircle extends Point2D {
     this._radius = radius;
   }
   /**
-   * Copies the values of another BoundingCircle to this one
-   *  @param {Object} circle - The BoundingCircle to copy
+   * Copies the values of another CircleCollider to this one
+   *  @param {Object} circle - The CircleCollider to copy
    */
   copy(circle) {
     this._x = circle._x;
@@ -40,7 +40,7 @@ export class BoundingCircle extends Point2D {
   set radius(val) { this._radius = val; }
 
   /**
-   * Detects if two bounding circles are currently in collision
+   * Detects if two CircleColliders are currently in collision
    *  @param {Object} circle The circle to check
    *  @return {boolean} True if in collision otherwise false
    */
